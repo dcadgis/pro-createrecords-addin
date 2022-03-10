@@ -95,7 +95,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
-using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace pro_createrecords_addin
 {
@@ -636,7 +636,7 @@ namespace pro_createrecords_addin
     /// <summary>
     /// Button implementation to show the DockPane.
     /// </summary>
-    internal class CreateRecordsPane_ShowButton : Button
+    internal class CreateRecordsPane_ShowButton : ArcGIS.Desktop.Framework.Contracts.Button
     {
         protected override void OnClick()
         {
