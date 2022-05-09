@@ -28,12 +28,12 @@
       </groups>
       <controls>
         <!-- add your controls here -->
-        <button id="pro_createrecords_addin_CreateRecordsPane_ShowButton" caption="Show Create Records Pane" className="CreateRecordsPane_ShowButton" loadOnClick="true" smallImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple16.png" largeImage="pack://application:,,,/ArcGIS.Desktop.Resources;component/Images/GenericButtonPurple32.png">
+        <button id="pro_createrecords_addin_CreateRecordsPane_ShowButton" caption="Show Create Records Pane" className="CreateRecordsPane_ShowButton" loadOnClick="true" smallImage="Images\create_records_image_16px.png" largeImage="Images\create_records_image_32px.png">
           <tooltip heading="Show Create Records Pane">Show Create Records Pane 1.0.0<disabledText /></tooltip>
         </button>
       </controls>
       <dockPanes>
-        <dockPane id="pro_createrecords_addin_CreateRecordsPane" hasHelp="true" delayLoadMessage="Loading Create Records Pane" caption="Create Records Pane" className="CreateRecordsPaneViewModel" dock="group" dockWith="esri_core_projectDockPane">
+        <dockPane id="pro_createrecords_addin_CreateRecordsPane" hasHelp="true" delayLoadMessage="Loading Create Records" caption="Create Records" className="CreateRecordsPaneViewModel" dock="group" dockWith="esri_core_projectDockPane">
           <content className="CreateRecordsPaneView" />
         </dockPane>
       </dockPanes>
