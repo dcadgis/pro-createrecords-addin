@@ -200,7 +200,8 @@ namespace pro_createrecords_addin
         private int _recordType;          // Variable that holds the record type based on the doc type
         private int _recordStatus;        // Determines if the record's parcels should be published.
         private bool _validafclog;        // Boolean value that determines if the afc log is valid.
-        private Brush _messageColor;      // Brush object to color the foreground for the listbox item's text property.
+        private Color _msgClrDocNum;      // Color object foreground for the listbox item's doc num text property .
+        private Color _msgClrAcctNum;     // Color object to color the foreground for the listbox item's account num text property.
 
         #endregion
 
@@ -234,14 +235,16 @@ namespace pro_createrecords_addin
             _recordType = 0;
             _recordStatus = 0;
             _validafclog = true;
+            _msgClrDocNum = Color.FromRgb(0, 0, 0); ;
+            _msgClrAcctNum = Color.FromRgb(128, 128, 128);
 
 
-             /******************************************************************************
-             * Hook CreateRecord commands                                                  *
-             * The AsyncRelayCommand is part of the Microsoft.Toolkit.Mvvm.Input namespace *
-             * and allows developers to pass class methods to ICommand implementations to  *
-             * be called from custom button controls on the xaml UI.                       *
-             * ****************************************************************************/
+            /******************************************************************************
+            * Hook CreateRecord commands                                                  *
+            * The AsyncRelayCommand is part of the Microsoft.Toolkit.Mvvm.Input namespace *
+            * and allows developers to pass class methods to ICommand implementations to  *
+            * be called from custom button controls on the xaml UI.                       *
+            * ****************************************************************************/
 
             CreateRecordCommand = new AsyncRelayCommand(func => AsyncCreateNewRecord(), () => this.VALID_AFC_LOG);
 
@@ -498,29 +501,36 @@ namespace pro_createrecords_addin
         /// message color or font color
         /// in MVVM for the document number.
         /// </summary>
-        public Brush MSG_COLOR_DOC_NUM
-        { get; set; }
+        public Color MSG_COLOR_DOC_NUM
+        {
+            get { return _msgClrDocNum; }
+            set { _msgClrDocNum = value; }
+        }
 
         /// <summary>
         /// Private variable for
         /// message color or font color
         /// in MVVM for the account number.
         /// </summary>
-        public Brush MSG_COLOR_ACCT_NUM
-        { get; set; }
+        public Color MSG_COLOR_ACCT_NUM
+        {
+            get { return _msgClrAcctNum; }
+            set { _msgClrAcctNum = value; }
+
+        }
 
 
 
         #endregion
 
-        #region Methods
+            #region Methods
 
 
         #region Get Current User
-        /// <summary>
-        /// Identifies the authenticated user.
-        /// </summary>
-        /// <returns>The string containing the user name without the domain.</returns>
+            /// <summary>
+            /// Identifies the authenticated user.
+            /// </summary>
+            /// <returns>The string containing the user name without the domain.</returns>
         public static string GetCurrentUser()
             {
                 // Get the logged in user
@@ -745,33 +755,65 @@ namespace pro_createrecords_addin
         #endregion
 
         #region Set Foreground Color
-         
-            /// <summary>
-            /// 
-            /// </summary>
-            /// <param name="_foregroundType"></param>
-            /// <returns></returns>
-            public Brush SetForegroundColor(int _foregroundType)
+
+        /// <summary>
+        /// Returns a color object based on 
+        /// the property type and if the
+        /// AFC log is marked as a rush.
+        /// </summary>
+        /// <param name="_foregroundType">Is an optional parameter and defaults to 
+        /// the instrument document number type = 1.</param>
+        /// <returns></returns>
+        public void SetForegroundColor(int _foregroundType = 1)
+        {
+
+            /**********************************************
+            * Define colors for dock pane text         ****
+            **********************************************/
+
+            try
             {
+
                 if (_rush)
                 {
-                
-                    return System.Windows.Media.Brushes.Red;
-                
+
+                    // Rush (Both foreground types are red)
+
+                    _msgClrDocNum = Color.FromRgb(255, 0, 0);
+                    _msgClrAcctNum = Color.FromRgb(255, 0, 0);
+
+
                 }
+
+                else if (_foregroundType == 1)
+
+                {
+
+                    // Document Number (Black)
+
+                    _msgClrDocNum = Color.FromRgb(0, 0, 0);
+
+                }
+
                 else
                 {
-                    switch (_foregroundType)
-                    {
-                        case 1:                             // Document Number
-                            return System.Windows.Media.Brushes.Black;
-                            break;
-                        default:                            // Account Number
-                            return System.Windows.Media.Brushes.Gray;
-                            break;
-                    }
+
+                    // Account Number (Dark Gray)
+
+                    _msgClrAcctNum = Color.FromRgb(128, 128, 128);
+
                 }
+
+
+
             }
+            catch (Exception ex)
+            {
+
+                ErrorLogs.WriteLogEntry("Create New Record Add-In: Set Foreground Color", ex.Message, System.Diagnostics.EventLogEntryType.Error);
+            }
+
+        }
 
 
         #endregion

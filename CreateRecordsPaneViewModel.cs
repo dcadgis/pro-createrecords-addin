@@ -95,7 +95,7 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
-using System.Windows.Media;
+using System.Windows.Controls;
 
 namespace pro_createrecords_addin
 {
@@ -114,6 +114,7 @@ namespace pro_createrecords_addin
         private const string _yes = "Y";
         private const string _blank = "";
         private ObservableCollection<AFCLog> _afclogs = new ObservableCollection<AFCLog>();
+        private ObservableCollection<AFCLog> _templogs = new ObservableCollection<AFCLog>();
         private ObservableCollection<AFCLog> _records = new ObservableCollection<AFCLog>();
         private ReadOnlyObservableCollection<AFCLog> _afclogsRO;
         private Object _lockObj = new object();
@@ -123,13 +124,16 @@ namespace pro_createrecords_addin
          * existing methods in the ViewModel from the button using AsyncRelayCommand.                     *
          * (1) RefreshListCommand - Refreshes the afc log list.                                           *
          * (2) CreateRecordCommand - Creates a new record based on selected AFC Log information.          *
+         * ************************************************************************************************
+         * THE COMMAND BELOW IS NOT CURRENTLY USED. THIS WAS NOT RECOMMENDED BY ESRI.                     *
+         * ************************************************************************************************
          * (3) CreateCleanupRecordCommand - Creates a new parcel fabric records of the cleanup type.      *
          *     This is a custom record with specific attributes applied automatically when the workflow   *
          *     involves  cleaning up GIS data only and no legal document is triggering a parcel change.   *
          *************************************************************************************************/
         public ICommand RefreshListCommand { get; set; }
 
-        public ICommand CreateCleanupRecordCommand { get; set; }
+        //public ICommand CreateCleanupRecordCommand { get; set; }
 
 
         #endregion
@@ -171,7 +175,7 @@ namespace pro_createrecords_addin
              * *****************************************************************************/
 
             RefreshListCommand = new AsyncRelayCommand( func => AsyncSearchForAFCLogs());
-            //
+            
             //CreateCleanupRecord = new AsyncRelayCommand(func => AsyncCreateCleanupRecord());
 
 
@@ -316,9 +320,11 @@ namespace pro_createrecords_addin
                 // if provided
                 IEnumerable<AFCLog> linqResults;
 
+
                 if (_searchString != _blank)
                 {
                     linqResults = _afclogs.Where(afc => afc.DOC_NUM.Contains(_searchString));
+                    //_templogs = _afclogs.FirstOrDefault(afc => afc.DOC_NUM.Contains(_searchString));
 
                 }
                 else
@@ -636,7 +642,7 @@ namespace pro_createrecords_addin
     /// <summary>
     /// Button implementation to show the DockPane.
     /// </summary>
-    internal class CreateRecordsPane_ShowButton : Button
+    internal class CreateRecordsPane_ShowButton : ArcGIS.Desktop.Framework.Contracts.Button
     {
         protected override void OnClick()
         {
