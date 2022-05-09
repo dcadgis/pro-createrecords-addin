@@ -50,7 +50,7 @@
         </DockPanel> -->
             <!-- Label providing instructions-->
             <Label Grid.Row="0" Grid.Column="0" Content="" VerticalAlignment="Center" FontSize="14" />
-            <Label Grid.Row="0" Grid.Column="1" Content="Enter an instrument or sequence number" VerticalAlignment="Center" />
+            <Label Grid.Row="0" Grid.Column="1" Content="Enter one or two characters of the number" VerticalAlignment="Center" />
             
             <!-- Search string for instrument and sequence number -->
             <TextBlock Grid.Row="2" Grid.Column="0" Text="Search:  " VerticalAlignment="Center" />
@@ -59,7 +59,7 @@
             <!-- Place holder for create cleanup record button -->
             <TextBlock Grid.Row="4" Grid.Column="0" Text="" VerticalAlignment="Center" />
             <Button x:Name="btnRefreshList" Grid.Row="4" Grid.Column="1" Width="80" HorizontalAlignment="Left" Content="Refresh List" Padding="5,0,5,0" Height="18" VerticalAlignment="Top" Command="{Binding Path=RefreshListCommand}" />
-            <Button x:Name="btnCreateCleanupRecord" Grid.Row="4" Grid.Column="1" Width="140" HorizontalAlignment="Right" Content="Create Cleanup Record" Padding="5,0,5,0" Command="{Binding Path=CreateCleanupRecordCommand}" />
+            <!--<Button x:Name="btnCreateCleanupRecord" Grid.Row="4" Grid.Column="1" Width="140" HorizontalAlignment="Right" Content="Create Cleanup Record" Padding="5,0,5,0" Command="{Binding Path=CreateCleanupRecordCommand}" />-->
             
             <!-- List box for Dock Pane Results -->
             <ListBox x:Name="afcListBox" Grid.Row="10" Grid.Column="0" Grid.ColumnSpan="2"

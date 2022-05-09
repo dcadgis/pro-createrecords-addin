@@ -182,6 +182,8 @@
   </ItemGroup>
   <ItemGroup>
     <Resource Include="Images\no_document_64px.png" />
+    <AddInContent Include="Images\create_records_image_16px.png" />
+    <AddInContent Include="Images\create_records_image_32px.png" />
     <Content Include="SQL\AN_CreateAFCLog_View.sql">
       <SubType>Component</SubType>
     </Content>
