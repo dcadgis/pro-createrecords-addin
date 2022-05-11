@@ -121,6 +121,7 @@ using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
+using System.Diagnostics;
 
 namespace pro_createrecords_addin
 {
@@ -133,7 +134,6 @@ namespace pro_createrecords_addin
         #region Constants
 
         private const string NOT_COMPLETED_DATE = "1900-01-01 00:00:00.000";
-        private const char BACK_SLASH = '\\';
         private const string BLANK = "";
         private const string NO_ACCT_NUM = "NO ACCOUNT NUMBER";
 
@@ -526,22 +526,7 @@ namespace pro_createrecords_addin
             #region Methods
 
 
-        #region Get Current User
-            /// <summary>
-            /// Identifies the authenticated user.
-            /// </summary>
-            /// <returns>The string containing the user name without the domain.</returns>
-        public static string GetCurrentUser()
-            {
-                // Get the logged in user
-                #pragma warning disable CA1416 // Disable platform compatibility
-                string authenticatedUser = System.Security.Principal.WindowsIdentity.GetCurrent().Name;
-                #pragma warning restore CA1416 // Re-enable platform compatibility
-            
-                return authenticatedUser.Split(BACK_SLASH)[1];
-            
-            }
-        #endregion
+
 
         #region Set Image Source
             /// <summary>
@@ -810,7 +795,7 @@ namespace pro_createrecords_addin
             catch (Exception ex)
             {
 
-                ErrorLogs.WriteLogEntry("Create New Record Add-In: Set Foreground Color", ex.Message, System.Diagnostics.EventLogEntryType.Error);
+                DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Set Foreground Color", ex.Message, System.Diagnostics.EventLogEntryType.Error);
             }
 
         }
@@ -898,11 +883,15 @@ namespace pro_createrecords_addin
                 });
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    ErrorLogs.WriteLogEntry("Create New Record Add-In: Create New Record", errorMessage, System.Diagnostics.EventLogEntryType.Error);
+                    DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Create New Record", errorMessage, EventLogEntryType.Error);
                 }
                 else
                 {
+                    DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Create New Record", String.Format("Created Record: {0} - {1}.", _name, _afcNote), EventLogEntryType.Information);
+
                     MessageBox.Show(String.Format("Created Record: {0} - {1}.", _name, _afcNote));
+
+                    
                 }
 
                 
@@ -910,7 +899,7 @@ namespace pro_createrecords_addin
             catch (Exception ex)
             {
 
-                ErrorLogs.WriteLogEntry("Create New Record Add-In: Create New Record", ex.Message, System.Diagnostics.EventLogEntryType.Error);
+                DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Create New Record", ex.Message, System.Diagnostics.EventLogEntryType.Error);
             }
 
             finally
@@ -949,43 +938,6 @@ namespace pro_createrecords_addin
         /// </summary>
         public event EventHandler<RecordCreatedEventArgs> RecordCreatedEvent;
             #endregion
-
-        #endregion
-
-        #region Display Test Message
-        /// <summary>
-        /// Asynchronous method that
-        /// displays a message to the
-        /// user.
-        /// </summary>
-        /// <returns></returns>
-        public async Task AsyncDisplayTestMessage()
-        {
-            try
-            {
-
-                await QueuedTask.Run(() =>
-                {
-                    var dialogResult = MessageBox.Show(String.Format("User: {0} clicked the image!", GetCurrentUser()));
-                    if (dialogResult == System.Windows.MessageBoxResult.OK)
-                    {
-                        MessageBox.Show("Ok Clicked");
-                    }
-                    else
-                    {
-                        MessageBox.Show("Cancel Clicked");
-                    }
-                });
-
-            }
-            catch (Exception ex)
-            {
-
-                ErrorLogs.WriteLogEntry("Create Records Add-In", ex.Message, System.Diagnostics.EventLogEntryType.Error);
-            }
-
-
-        }
 
         #endregion
 
