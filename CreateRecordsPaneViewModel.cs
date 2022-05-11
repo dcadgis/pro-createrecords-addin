@@ -535,11 +535,11 @@ namespace pro_createrecords_addin
                 // One of the fields in the where clause might not exist. 
                 // There are multiple ways this can be handled:
                 // Handle error appropriately
-                ErrorLogs.WriteLogEntry("Create Records Add-In: Populate AFC Log Collection", fieldException.Message, System.Diagnostics.EventLogEntryType.Error);
+                DCAD.GIS.OS.WriteLogEntry("Create Records Add-In: Populate AFC Log Collection", fieldException.Message, System.Diagnostics.EventLogEntryType.Error);
             }
             catch (Exception exception)
             {
-                ErrorLogs.WriteLogEntry("Create Records Add-In: Populate AFC Log Collection", exception.Message, System.Diagnostics.EventLogEntryType.Error);
+                DCAD.GIS.OS.WriteLogEntry("Create Records Add-In: Populate AFC Log Collection", exception.Message, System.Diagnostics.EventLogEntryType.Error);
             }
         }
 
@@ -567,7 +567,7 @@ namespace pro_createrecords_addin
             catch (Exception exception)
             {
 
-                ErrorLogs.WriteLogEntry("Create Records Add-In: OnRecordCreated Event Handler", exception.Message, System.Diagnostics.EventLogEntryType.Error);
+                DCAD.GIS.OS.WriteLogEntry("Create Records Add-In: OnRecordCreated Event Handler", exception.Message, System.Diagnostics.EventLogEntryType.Error);
             }
 
         }
