@@ -96,6 +96,7 @@ using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Windows.Controls;
+using DCAD.GIS;
 
 namespace pro_createrecords_addin
 {
@@ -110,7 +111,7 @@ namespace pro_createrecords_addin
         private const string _database = "GEDT";
         private const AuthenticationMode _authentication = AuthenticationMode.OSA;
         private const string _version = "dbo.DEFAULT";
-        private const string _afcView = "ADM.AFC_LOG_VW";
+        private const string _afcView = "ADM.AFC_LOG_VW_SDE";
         private const string _yes = "Y";
         private const string _blank = "";
         private ObservableCollection<AFCLog> _afclogs = new ObservableCollection<AFCLog>();
@@ -118,6 +119,7 @@ namespace pro_createrecords_addin
         private ObservableCollection<AFCLog> _records = new ObservableCollection<AFCLog>();
         private ReadOnlyObservableCollection<AFCLog> _afclogsRO;
         private Object _lockObj = new object();
+        private OS _os = new OS();
 
         /**************************************************************************************************
          * Public ICommand Implementations for Custom WPF Buttons. This allows the application to call    *
@@ -422,7 +424,7 @@ namespace pro_createrecords_addin
 
             try
             {
-                await ArcGIS.Desktop.Framework.Threading.Tasks.QueuedTask.Run(() => {
+                await QueuedTask.Run(() => {
 
                     // Opening a Non-Versioned SQL Server instance.
                     DatabaseConnectionProperties connectionProperties = new DatabaseConnectionProperties(EnterpriseDatabaseType.SQLServer)
@@ -535,11 +537,11 @@ namespace pro_createrecords_addin
                 // One of the fields in the where clause might not exist. 
                 // There are multiple ways this can be handled:
                 // Handle error appropriately
-                DCAD.GIS.OS.WriteLogEntry("Create Records Add-In: Populate AFC Log Collection", fieldException.Message, System.Diagnostics.EventLogEntryType.Error);
+               OS.LogWarning(fieldException.Message, "Create Records Add-In: Populate AFC Log Collection");
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
-                DCAD.GIS.OS.WriteLogEntry("Create Records Add-In: Populate AFC Log Collection", exception.Message, System.Diagnostics.EventLogEntryType.Error);
+                OS.LogException(ex, "Create Records Add-In: Populate AFC Log Collection");
             }
         }
 
@@ -564,10 +566,10 @@ namespace pro_createrecords_addin
                 AsyncSearchForAFCLogs();
 
             }
-            catch (Exception exception)
+            catch (Exception ex)
             {
 
-                DCAD.GIS.OS.WriteLogEntry("Create Records Add-In: OnRecordCreated Event Handler", exception.Message, System.Diagnostics.EventLogEntryType.Error);
+                OS.LogException(ex, "Create Records Add-In: OnRecordCreated Event Handler");
             }
 
         }
