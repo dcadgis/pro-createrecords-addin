@@ -122,6 +122,7 @@ using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
+using DCAD.GIS;
 
 namespace pro_createrecords_addin
 {
@@ -202,7 +203,7 @@ namespace pro_createrecords_addin
         private bool _validafclog;        // Boolean value that determines if the afc log is valid.
         private Color _msgClrDocNum;      // Color object foreground for the listbox item's doc num text property .
         private Color _msgClrAcctNum;     // Color object to color the foreground for the listbox item's account num text property.
-
+        private OS _os;                   // New OS object
         #endregion
 
         public AFCLog()
@@ -237,6 +238,7 @@ namespace pro_createrecords_addin
             _validafclog = true;
             _msgClrDocNum = Color.FromRgb(0, 0, 0); ;
             _msgClrAcctNum = Color.FromRgb(128, 128, 128);
+            _os = new OS();
 
 
             /******************************************************************************
@@ -520,7 +522,6 @@ namespace pro_createrecords_addin
         }
 
 
-
         #endregion
 
             #region Methods
@@ -795,7 +796,7 @@ namespace pro_createrecords_addin
             catch (Exception ex)
             {
 
-                DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Set Foreground Color", ex.Message, System.Diagnostics.EventLogEntryType.Error);
+                OS.LogException(ex, "Create New Record Add-In: Set Foreground Color");
             }
 
         }
@@ -883,11 +884,11 @@ namespace pro_createrecords_addin
                 });
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Create New Record", errorMessage, EventLogEntryType.Error);
+                    OS.LogError(errorMessage, "Create New Record Add-In: Create New Record");
                 }
                 else
                 {
-                    DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Create New Record", String.Format("Created Record: {0} - {1}.", _name, _afcNote), EventLogEntryType.Information);
+                    OS.LogInformation(String.Format("Created Record: {0} - {1}.", _name, _afcNote), "Create New Record Add-In: Create New Record");
 
                     MessageBox.Show(String.Format("Created Record: {0} - {1}.", _name, _afcNote));
 
@@ -899,7 +900,7 @@ namespace pro_createrecords_addin
             catch (Exception ex)
             {
 
-                DCAD.GIS.OS.WriteLogEntry("Create New Record Add-In: Create New Record", ex.Message, System.Diagnostics.EventLogEntryType.Error);
+                OS.LogException(ex, "Create New Record Add-In: Create New Record");
             }
 
             finally
