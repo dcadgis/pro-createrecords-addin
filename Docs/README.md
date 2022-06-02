@@ -78,7 +78,25 @@ in the Add-Ins tab with the title **Show Create AFC Records Dock Pane**.
     an existing record. Make sure that record for the specific AFC log does 
     not already exist or that the AFC log has been assigned to you in Message 
     Central.
+
+
+### Logging
+This application interfaces with the Windows Event Log. When an exception is thrown
+in the application for some methods, it is written to the Windows Application Event Log.
+
+![Windows Application Event Log](../Images/eventlog.png)
+
+#### Granting Permission to Write to the Application Event Log
+Permission must be given in order to the authenticated
+user in order to write to the log. Follow the steps below to provide access:
+
+ 1. Open regedit.
+ 2. Navigate to `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\EventLog\Application`
+ 3. Right click the `Application` directory and select *Permissions...*
+ 4. Make sure that Authenticated Users have Full Control. Click ok and exit regedit.
  
+![Event Log Write Permissions](../Images/permissions.png)
+
 ----
 ## Revision History
 
