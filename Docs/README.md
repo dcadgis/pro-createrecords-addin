@@ -11,7 +11,7 @@
 * [Revision History](#revision-history)
 
 ### Introduction
-This project represents an ArcGIS Pro 2.8 SDK Add-In that reads a database view and 
+This project represents an ArcGIS Pro 2.9 SDK Add-In that reads a database view and 
 displays view data within a custom list nested within a dockpane.
 
 ### Architecture
@@ -19,10 +19,11 @@ A combination of directories contain sql queries, c# files, images, and document
 Their purpose and contents include:
 
  * DarkImages - Images for ArcGIS Pro's dark theme.
- * Images - Images for ArcGIS Pro's dark theme.
- * Docs - Contains this README.MD document.
- * SQL - Contains sql queries that identify the ADM.AFC_LOG_VW.
- * Root - C#, .daml, and .xaml files that makup the MVVM Addin.
+ * Images     - Images for ArcGIS Pro's light theme.
+ * Libraries  - Custom c# libraries
+ * Docs       - This README.MD document.
+ * SQL        - Sql queries that identify the data source for the dock pane.
+ * Root       - C#, .daml, and .xaml files that makup the MVVM Addin.
 
 ### Integration
 In order to view AFC logs that are relevant to the user, 
@@ -32,10 +33,7 @@ at the moment, cannot be assigned to users from ArcGIS Pro.
 One of the goals of this project is to format record names so they
  match the formatting of Legal Line 4 in the Mars application. 
 To do this, the record name will be constrained to twelve characters
- in one of three formats. The [cleanup format](#Cleanup_Project_ID) 
-will not match legal line 4, but will follow a pattern consistent with 
-the [instrument number](#Instrument_Number) and [research form ID](#Research_Form_ID)
-by constraining the ID to twelve characters.
+ in one of two formats. The [instrument number](#Instrument_Number) and [research form ID](#Research_Form_ID).
 
 #### Instrument Number
 
@@ -54,23 +52,13 @@ entry for that date. For example, 2022-0314-03 represents a research form
 that was the third entered on March 14, 2022. This identifier contains 
 alphanumeric characters because of the dash included in the number. 
 
-#### Cleanup Project ID
-
-The cleanup project ID is an alphanumeric identifier that combines the 
-letter “C” with the three digit tile number where the project is located 
-and the date the record was created in YYYYMMDD format. For example, if a 
-GIS Specialist initiate a cleanup project in Tile 174 on May 22, 2022 the 
-name of the record would be C17420220522. If the cleanup project spans 
-multiple tiles it will need to have one record for each tile where it is 
-exists with the same date appended to the record name.
-
 #### Dock Pane Window
 The dockpane window will display current AFC logs that are currently 
 Active and have been assigned to the authenticated user. These will be 
 bound to the dockpane and allow GIS Specialists to search for AFC logs 
 within the ArcGIS Pro project. The Add-In will import select columns 
 from the AFC_LOG database table formatted for a quick view to help 
-identify the AFC log for the specialist. 
+identify the AFC log for the GIS specialist. 
 
 
 ### Deployment
@@ -90,13 +78,32 @@ in the Add-Ins tab with the title **Show Create AFC Records Dock Pane**.
     an existing record. Make sure that record for the specific AFC log does 
     not already exist or that the AFC log has been assigned to you in Message 
     Central.
+
+
+### Logging
+This application interfaces with the Windows Event Log. When an exception is thrown
+in the application for some methods, it is written to the Windows Application Event Log.
+
+![Windows Application Event Log](../Images/eventlog.png)
+
+#### Granting Permission to Write to the Application Event Log
+Permission must be given in order to the authenticated
+user in order to write to the log. Follow the steps below to provide access:
+
+ 1. Open regedit.
+ 2. Navigate to `HKEY_LOCAL_MACHINE\System\CurrentControlSet\Services\EventLog\Application`
+ 3. Right click the `Application` directory and select *Permissions...*
+ 4. Make sure that Authenticated Users have Full Control. Click ok and exit regedit.
  
+![Event Log Write Permissions](../Images/permissions.png)
+
 ----
 ## Revision History
 
 |*Date*|*Rev*|*Description*|*Author*|
 |------|-----|-------------|--------|
-|06/28/21|1.0 |Initial Release |John W. Fell |
+|06/28/21|1.0|Initial Release|John W. Fell|
+|05/12/22|1.1|Added libraries directory|John W. Fell|
 
 
 
