@@ -19,16 +19,16 @@ A combination of directories contain sql queries, c# files, images, and document
 Their purpose and contents include:
 
  * DarkImages - Images for ArcGIS Pro's dark theme.
+ * Docs       - This README.MD document.
  * Images     - Images for ArcGIS Pro's light theme.
  * Libraries  - Custom c# libraries
- * Docs       - This README.MD document.
  * SQL        - Sql queries that identify the data source for the dock pane.
  * Root       - C#, .daml, and .xaml files that makup the MVVM Addin.
 
 ### Integration
 In order to view AFC logs that are relevant to the user, 
 a database view will be created showing those already assigned 
-to the user. This approach has to be used because AFC logs, 
+to the user using Message Central. This approach has to be used because AFC logs, 
 at the moment, cannot be assigned to users from ArcGIS Pro.
 One of the goals of this project is to format record names so they
  match the formatting of Legal Line 4 in the Mars application. 
@@ -104,6 +104,7 @@ user in order to write to the log. Follow the steps below to provide access:
 |------|-----|-------------|--------|
 |06/28/21|1.0|Initial Release|John W. Fell|
 |05/12/22|1.1|Added libraries directory|John W. Fell|
+|06/08/22|1.2|Added SQL views to remove deleted records|John W. Fell|
 
 
 
