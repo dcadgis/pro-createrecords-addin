@@ -5,7 +5,7 @@
    Environment:        Development
    Exec Location:      
    Code Location:      https://github.com/dcadgis/pro-createrecords-addin
-   Purpose:            To generate a database view named ADM.AFC_LOG_VW for current AFC Logs assigned to the 
+   Purpose:            To generate a database view named ADM.AFC_LOG_VW_SDE for current AFC Logs assigned to the 
                        authenticated user.
    Algorithm:          Presents a database view for uncompleted and assigned AFC Logs. The SYSTEM_USER keyword
                        helps to present only those assigned logs to the authenticated user. This view ignores
@@ -23,6 +23,8 @@
                        (2) 
    Revision History:
                         06/28/21 - Created sql script.  -- jwf --
+						06/08/22 - Changed the JOIN clause to the Records feature service to represent
+						           the full research AFC log name (YYYY-MMDD-SS).
  *********************************************************************************************************************************************************************/
 
 USE GEDT
@@ -32,7 +34,7 @@ GO
 *  DELETE VIEW IF IT EXISTS                                   *
 *  Note: Only works in MS SQL Server 2016 and later           *
 **************************************************************/
-DROP VIEW IF EXISTS [ADM].[AFC_LOG_VW]
+DROP VIEW IF EXISTS [ADM].[AFC_LOG_VW_SDE]
 GO
 
 /* VIEW DEFINITION */
@@ -81,13 +83,13 @@ SELECT  AFC.AFC_LOG_ID
 	   * the database view                 *
 	   ************************************/
 
-	   ADM.PARCELFABRIC_STAGING_RECORDS R
+	   ADM.ACTIVE_RECORDS AR
 
-	   ON AFC.INSTRUMENT_NUM      = R.NAME OR
-	      AFC.SEQ_NUM             = RIGHT(R.NAME, 7)
+	   ON AFC.INSTRUMENT_NUM                                    = AR.NAME 
+	   OR CONCAT(AFC.AFC_YEAR,'-',AFC.SEQ_NUM)                  = AR.NAME
 	   
 	   WHERE AFC.DRAFTER_EMPL_ID = CONVERT(CHAR(8), RIGHT(UPPER(RTRIM(SYSTEM_USER)), LEN(SYSTEM_USER) - 5))
 	     AND AFC.AFC_YEAR IN (YEAR(GETDATE()) - 1, YEAR(GETDATE()))
 		 AND AFC.DRAFTER_COMP_DT = '1900-01-01 00:00:00.000'
 		 AND AFC.AFC_STATUS_CD IN (1, 4)
-		 AND R.NAME IS NULL
+		 AND AR.NAME IS NULL
