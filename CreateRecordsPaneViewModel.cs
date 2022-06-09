@@ -13,7 +13,8 @@
  * ***************************************************************************************************************************************************************
  * 
  * CLASS
- * PURPOSE:     Business logic for MVVM pattern dockpane used in ArcGIS Pro.
+ * PURPOSE:     Business logic for MVVM pattern dockpane used to create parcel fabric
+ *              records in ArcGIS Pro.
  *              
  *
  * CLASS
@@ -37,9 +38,8 @@
 
  *
  * CLASS 
- * METHODS:     Provide a list of the Methods available in this class and a brief explanation of their function.
- *              (example- GetSomeQuery() method accepts parameters from layer variable & accesses xyz feature class in GPUB and returns results in a ListArray.)
- *              (example- ReturnResults() method cycles through the ListArray and populates the message box for the user to review.)
+ * METHODS:     AsyncSearchForAFCLogs() - Initiates a pull from the data source in order to populate the dockpane.
+ *              PopulateAFCLogCollection() - Reads the database view and populates the collection with AFC log objects.
  *
  * CLASS
  * EVENTS:      Provide a list of the Events available in this class and a brief explanation of the actions they represent.
@@ -55,21 +55,20 @@
  * SUPPORTING
  * CLASSES
  * AND
- * INTERFACES:  If this class is dependent on other classes or interfaces, list those classes with a brief explanation of their dependency.
- *              (example- a). DCADUtils.cs ==> General functions & methods.)
+ * INTERFACES:  AFCLog.cs - Properties and methods for AFC log objects created in the AFC log collection.
+ *              OS.cs     - Properties and methods for logging messages to the event log.
  *              (example- b). ErrorLog.cs ==> User Event Log controls.)
  *
  * SOURCE
  * DATA
- * CONDITIONS:  Describe if there are specific conditions to be considered for internal/external data access or data formatting
- *              (example- xyz feature class must have Address field populated for the query to return successful results.)
+ * CONDITIONS:  The user must assign an AFC log to themselves before it will be visible in the dockpane.
  *
  *
  * SUPPORTING
  * ONLINE
- * DOCUMENTATION: If online documentation was used to create code in this file, then list them with a brief description here. Use https://bit.ly/ to minimize the URL. 
- *                 (example- (1)) List<double> - https://bit.ly/2wFEESu. A system.collections.generic list object of type double.
- *                 (example- (2)) foreach - https://bit.ly/2T16AZT. An iterator for any object type.
+ * DOCUMENTATION:  
+ *                 
+ *
  *
  *
  * APPLICABLE

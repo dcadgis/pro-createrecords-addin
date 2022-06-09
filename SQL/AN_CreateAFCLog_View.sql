@@ -5,7 +5,7 @@
    Environment:        Development
    Exec Location:      
    Code Location:      https://github.com/dcadgis/pro-createrecords-addin
-   Purpose:            To generate a database view named ADM.AFC_LOG_VW_SDE for current AFC Logs assigned to the 
+   Purpose:            To generate a database view named ADM.AFC_LOG_SDE_VW for current AFC Logs assigned to the 
                        authenticated user.
    Algorithm:          Presents a database view for uncompleted and assigned AFC Logs. The SYSTEM_USER keyword
                        helps to present only those assigned logs to the authenticated user. This view ignores
@@ -22,9 +22,10 @@
    Resources:          (1) SYSTEM_USER  - https://bit.ly/3y0Zfv1
                        (2) 
    Revision History:
-                        06/28/21 - Created sql script.  -- jwf --
-						06/08/22 - Changed the JOIN clause to the Records feature service to represent
-						           the full research AFC log name (YYYY-MMDD-SS).
+                        06/28/21 -jwf- Created sql script.
+						06/08/22 -jwf- Changed the JOIN clause to the Records feature service to represent
+						               the full research AFC log name (YYYY-MMDD-SS).
+						06/09/22 -jwf- Changed view name to AFC_LOG_SDE_VW. 
  *********************************************************************************************************************************************************************/
 
 USE GEDT
@@ -34,11 +35,11 @@ GO
 *  DELETE VIEW IF IT EXISTS                                   *
 *  Note: Only works in MS SQL Server 2016 and later           *
 **************************************************************/
-DROP VIEW IF EXISTS [ADM].[AFC_LOG_VW_SDE]
+DROP VIEW IF EXISTS [ADM].[AFC_LOG_SDE_VW]
 GO
 
 /* VIEW DEFINITION */
-CREATE VIEW [ADM].[AFC_LOG_VW]
+CREATE VIEW [ADM].[AFC_LOG_SDE_VW]
 AS
 SELECT  AFC.AFC_LOG_ID
        ,AFC.AFC_YEAR

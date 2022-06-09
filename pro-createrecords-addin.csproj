@@ -184,6 +184,14 @@
     <Resource Include="Images\no_document_64px.png" />
     <AddInContent Include="Images\create_records_image_16px.png" />
     <AddInContent Include="Images\create_records_image_32px.png" />
+    <Resource Include="DarkImages\new_record_32px.png" />
+    <Resource Include="DarkImages\create_records_darkimage.png" />
+    <Resource Include="DarkImages\create_records_darkimage_32px.png" />
+    <Resource Include="DarkImages\create_records_darkimage_16px.png" />
+    <Resource Include="DarkImages\addition_document_darkimage_64px.png" />
+    <Resource Include="DarkImages\no_document_darkimage_64px.png" />
+    <Resource Include="DarkImages\research_document_darkimage_64px.png" />
+    <Resource Include="DarkImages\split_document_darkimage_64px.png" />
     <Content Include="SQL\AN_CreateDeletedRecords_View.sql" />
     <Content Include="SQL\AN_CreateActiveRecords_View.sql" />
     <Content Include="SQL\AN_CreateAFCLog_View.sql">
