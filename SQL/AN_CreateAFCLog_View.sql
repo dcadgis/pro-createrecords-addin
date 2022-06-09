@@ -17,7 +17,9 @@
                               (4) Corrections     - Require corrections before being sent to PRE
                     
    Usage:              The database view can be queried using an IQueryFilter or ArcGIS Pro SDK Snippet.
-   Dependencies:       There must be a table named AFC_LOG in the mars database.
+   Dependencies:       There must be a table named AFC_LOG in the mars database. There must be two database views in the geodatabase:
+                       (1) ADM.ACTIVE_RECORDS_VW
+					   (2) ADM.DELETED_RECORDS_VW
    Permissions:        The authenticated user must have read permission. 
    Resources:          (1) SYSTEM_USER  - https://bit.ly/3y0Zfv1
                        (2) 
