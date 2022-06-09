@@ -59,7 +59,7 @@
  *              
  *              
  * CLASS 
- * METHODS:     Provide a list of the Methods available in this class and a brief explanation of their function.
+ * METHODS:     AsyncCreateNewRecord() - 
  *              (example- GetSomeQuery() method accepts parameters from layer variable & accesses xyz feature class in GPUB and returns results in a ListArray.)
  *              (example- ReturnResults() method cycles through the ListArray and populates the message box for the user to review.)
  *
@@ -89,9 +89,7 @@
  *
  * SUPPORTING
  * ONLINE
- * DOCUMENTATION: If online documentation was used to create code in this file, then list them with a brief description here. Use https://bit.ly/ to minimize the URL. 
- *                 (example- (1)) List<double> - https://bit.ly/2wFEESu. A system.collections.generic list object of type double.
- *                 (example- (2)) foreach - https://bit.ly/2T16AZT. An iterator for any object type.
+ * DOCUMENTATION: (1) Arcgis Pro SDK Snippets - https://bit.ly/395z4fO. Used the code to create a parcel fabric record and assign it as the active record.
  *
  *
  * APPLICABLE
