@@ -76,6 +76,9 @@
  *            (example- (1) C# Coding Standards - https://bit.ly/r398u779. DCAD standards for C# development.
  *
  *
+ * MODIFICATIONS:
+ * 
+ *                 06/16/22 -jwf- Altered the name of the database view acting as AFC log data source.
  * ***************************************************************************************************************************************************************
  * ***************************************************************************************************************************************************************
  */
@@ -110,7 +113,7 @@ namespace pro_createrecords_addin
         private const string _database = "GEDT";
         private const AuthenticationMode _authentication = AuthenticationMode.OSA;
         private const string _version = "dbo.DEFAULT";
-        private const string _afcView = "ADM.AFC_LOG_VW_SDE";
+        private const string _afcView = "ADM.AFC_LOG_SDE_VW";
         private const string _yes = "Y";
         private const string _blank = "";
         private ObservableCollection<AFCLog> _afclogs = new ObservableCollection<AFCLog>();
