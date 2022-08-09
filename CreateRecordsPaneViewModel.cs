@@ -100,6 +100,7 @@ using Microsoft.Toolkit.Mvvm.Input;
 using System.Windows.Controls;
 using DCAD.GIS;
 
+
 namespace pro_createrecords_addin
 {
 
@@ -109,7 +110,6 @@ namespace pro_createrecords_addin
         #region Constants
 
         private const string _dockPaneID  = "pro_createrecords_addin_CreateRecordsPane";
-        private const string _instance = "DCADSQLVM02";
         private const string _database = "GEDT";
         private const AuthenticationMode _authentication = AuthenticationMode.OSA;
         private const string _version = "dbo.DEFAULT";
@@ -122,6 +122,9 @@ namespace pro_createrecords_addin
         private ReadOnlyObservableCollection<AFCLog> _afclogsRO;
         private Object _lockObj = new object();
         private OS _os = new OS();
+        private Web _web = new Web();
+        private DCAD.GIS.Database _db = new DCAD.GIS.Database();
+        private string _instance;
 
         /**************************************************************************************************
          * Public ICommand Implementations for Custom WPF Buttons. This allows the application to call    *
@@ -148,7 +151,8 @@ namespace pro_createrecords_addin
             // included in the current map and that the AFC Log View exists
             // in the geodatabase
 
-
+            /* Identify the correct environment */
+            GetServerInstanceByEnv();
 
         /******************************************************************
          * ReadOnlyObservableCollection for AFC Logs binding:
@@ -201,6 +205,18 @@ namespace pro_createrecords_addin
 
         #region Properties
 
+        /// <summary>
+        /// The name of the geodatabase
+        /// server that stores the view
+        /// containing AFC log information
+        /// acting as the data source for
+        /// the Create Recrods pane.
+        /// </summary>
+        public String ServerInstance
+        {
+            get { return _instance; }
+            set { _instance = value;  }
+        }
 
         /// <summary>
         /// Property containing list of AFC logs
@@ -434,7 +450,7 @@ namespace pro_createrecords_addin
                         AuthenticationMode = _authentication,
 
                         // Where testMachine is the machine where the instance is running and testInstance is the name of the SqlServer instance.
-                        Instance = _instance,
+                        Instance = ServerInstance,
 
                         // Provided that a database called LocalGovernment has been created on the testInstance and geodatabase has been enabled on the database.
                         Database = _database,
@@ -625,7 +641,47 @@ namespace pro_createrecords_addin
                 }
         #endregion
 
+        #region Get Server Instance Based on Environment
+        /// <summary>
+        /// This method returns the database server
+        /// name based on the environment derived from
+        /// the active portal 
+        /// </summary>
+        public void GetServerInstanceByEnv()
+        {
+            string _serverInstance = String.Empty;
 
+            // Set the environment
+            _web.SetEnvironment();
+
+
+            switch (_web.Environment)
+            {
+                case 0: // Development database server
+                    _serverInstance = _db.DevTransDBServer;
+                    break;
+
+                case 1: // Staging database server
+                    _serverInstance = _db.StgTransDBServer;
+                    break;
+
+                case 2: // Production database server
+                    _serverInstance = _db.prdTransDBServer;
+                    break;
+
+                case 3: // Database server unknown
+                    _serverInstance = "UNKNOWN";
+                    break;
+
+                default: // Something else happened
+
+                    break;
+            }
+
+            ServerInstance = _serverInstance;
+
+        }
+        #endregion
 
         #endregion
 
