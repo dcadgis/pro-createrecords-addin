@@ -13,7 +13,8 @@
  * ***************************************************************************************************************************************************************
  * 
  * CLASS
- * PURPOSE:     Business logic for MVVM pattern dockpane used in ArcGIS Pro.
+ * PURPOSE:     Business logic for MVVM pattern dockpane used to create parcel fabric
+ *              records in ArcGIS Pro.
  *              
  *
  * CLASS
@@ -37,9 +38,8 @@
 
  *
  * CLASS 
- * METHODS:     Provide a list of the Methods available in this class and a brief explanation of their function.
- *              (example- GetSomeQuery() method accepts parameters from layer variable & accesses xyz feature class in GPUB and returns results in a ListArray.)
- *              (example- ReturnResults() method cycles through the ListArray and populates the message box for the user to review.)
+ * METHODS:     AsyncSearchForAFCLogs() - Initiates a pull from the data source in order to populate the dockpane.
+ *              PopulateAFCLogCollection() - Reads the database view and populates the collection with AFC log objects.
  *
  * CLASS
  * EVENTS:      Provide a list of the Events available in this class and a brief explanation of the actions they represent.
@@ -55,21 +55,20 @@
  * SUPPORTING
  * CLASSES
  * AND
- * INTERFACES:  If this class is dependent on other classes or interfaces, list those classes with a brief explanation of their dependency.
- *              (example- a). DCADUtils.cs ==> General functions & methods.)
+ * INTERFACES:  AFCLog.cs - Properties and methods for AFC log objects created in the AFC log collection.
+ *              OS.cs     - Properties and methods for logging messages to the event log.
  *              (example- b). ErrorLog.cs ==> User Event Log controls.)
  *
  * SOURCE
  * DATA
- * CONDITIONS:  Describe if there are specific conditions to be considered for internal/external data access or data formatting
- *              (example- xyz feature class must have Address field populated for the query to return successful results.)
+ * CONDITIONS:  The user must assign an AFC log to themselves before it will be visible in the dockpane.
  *
  *
  * SUPPORTING
  * ONLINE
- * DOCUMENTATION: If online documentation was used to create code in this file, then list them with a brief description here. Use https://bit.ly/ to minimize the URL. 
- *                 (example- (1)) List<double> - https://bit.ly/2wFEESu. A system.collections.generic list object of type double.
- *                 (example- (2)) foreach - https://bit.ly/2T16AZT. An iterator for any object type.
+ * DOCUMENTATION:  
+ *                 
+ *
  *
  *
  * APPLICABLE
@@ -77,6 +76,11 @@
  *            (example- (1) C# Coding Standards - https://bit.ly/r398u779. DCAD standards for C# development.
  *
  *
+ * MODIFICATIONS:
+ * 
+ *                 06/16/22 -jwf- Altered the name of the database view acting as AFC log data source.
+ *                 08/11/22 -jwf- Added logic to change the database server name connection based on the
+ *                                active portal url (development, staging, production) environments.
  * ***************************************************************************************************************************************************************
  * ***************************************************************************************************************************************************************
  */
@@ -95,8 +99,10 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using DCAD.GIS;
+
+
 
 namespace pro_createrecords_addin
 {
@@ -107,11 +113,10 @@ namespace pro_createrecords_addin
         #region Constants
 
         private const string _dockPaneID  = "pro_createrecords_addin_CreateRecordsPane";
-        private const string _instance = "DCADSQLVM02";
         private const string _database = "GEDT";
         private const AuthenticationMode _authentication = AuthenticationMode.OSA;
         private const string _version = "dbo.DEFAULT";
-        private const string _afcView = "ADM.AFC_LOG_VW_SDE";
+        private const string _afcView = "ADM.AFC_LOG_SDE_VW";
         private const string _yes = "Y";
         private const string _blank = "";
         private ObservableCollection<AFCLog> _afclogs = new ObservableCollection<AFCLog>();
@@ -120,6 +125,9 @@ namespace pro_createrecords_addin
         private ReadOnlyObservableCollection<AFCLog> _afclogsRO;
         private Object _lockObj = new object();
         private OS _os = new OS();
+        private Web _web = new Web();
+        private DCAD.GIS.Database _db = new DCAD.GIS.Database();
+        private string _instance;
 
         /**************************************************************************************************
          * Public ICommand Implementations for Custom WPF Buttons. This allows the application to call    *
@@ -146,7 +154,8 @@ namespace pro_createrecords_addin
             // included in the current map and that the AFC Log View exists
             // in the geodatabase
 
-
+            /* Identify the correct environment */
+            GetServerInstanceByEnv();
 
         /******************************************************************
          * ReadOnlyObservableCollection for AFC Logs binding:
@@ -199,6 +208,18 @@ namespace pro_createrecords_addin
 
         #region Properties
 
+        /// <summary>
+        /// The name of the geodatabase
+        /// server that stores the view
+        /// containing AFC log information
+        /// acting as the data source for
+        /// the Create Recrods pane.
+        /// </summary>
+        public String ServerInstance
+        {
+            get { return _instance; }
+            set { _instance = value;  }
+        }
 
         /// <summary>
         /// Property containing list of AFC logs
@@ -432,7 +453,7 @@ namespace pro_createrecords_addin
                         AuthenticationMode = _authentication,
 
                         // Where testMachine is the machine where the instance is running and testInstance is the name of the SqlServer instance.
-                        Instance = _instance,
+                        Instance = ServerInstance,
 
                         // Provided that a database called LocalGovernment has been created on the testInstance and geodatabase has been enabled on the database.
                         Database = _database,
@@ -623,7 +644,55 @@ namespace pro_createrecords_addin
                 }
         #endregion
 
+        #region Get Server Instance Based on Environment
+        /// <summary>
+        /// This method returns the database server
+        /// name based on the environment derived from
+        /// the active portal 
+        /// </summary>
+        public void GetServerInstanceByEnv()
+        {
+            string _serverInstance = String.Empty;
 
+            // Set the environment
+            _web.SetEnvironment();
+
+
+            switch (_web.Environment)
+            {
+                case 0: // Development database server
+                    _serverInstance = _db.DevTransDBServer;
+                    break;
+
+                case 1: // Staging database server
+                    _serverInstance = _db.StgTransDBServer;
+                    break;
+
+                case 2: // Production database server
+                    _serverInstance = _db.prdTransDBServer;
+                    break;
+
+                case 3: // Database server unknown
+
+                    OS.LogError("The target database server is UNKNOWN.", "Create Records Add-In");
+
+                    // TODO: Correct dispatch error with these - MessageBox.Show("The target database server is UNKNOWN.", "Create Records Add-In", MessageBoxButtons.OK);
+
+                    return;
+
+                default: // Something else happened
+
+                    OS.LogError("There was a problem setting the target database environment.", "Create Records Add-In");
+
+                    // TODO: Correct dispatch error with these - MessageBox.Show("Created Records Add-In: There was a problem setting the target database environment.");
+
+                    return;
+            }
+
+            ServerInstance = _serverInstance;
+
+        }
+        #endregion
 
         #endregion
 

@@ -105,7 +105,7 @@ user in order to write to the log. Follow the steps below to provide access:
 |06/28/21|1.0|Initial Release|John W. Fell|
 |05/12/22|1.1|Added libraries directory|John W. Fell|
 |06/08/22|1.2|Added SQL views to remove deleted records|John W. Fell|
-
+|08/09/22|1.3|Added logic for checking the environment based on the active portal|John W. Fell|
 
 
 ----

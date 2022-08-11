@@ -59,7 +59,7 @@
  *              
  *              
  * CLASS 
- * METHODS:     Provide a list of the Methods available in this class and a brief explanation of their function.
+ * METHODS:     AsyncCreateNewRecord() - 
  *              (example- GetSomeQuery() method accepts parameters from layer variable & accesses xyz feature class in GPUB and returns results in a ListArray.)
  *              (example- ReturnResults() method cycles through the ListArray and populates the message box for the user to review.)
  *
@@ -89,9 +89,7 @@
  *
  * SUPPORTING
  * ONLINE
- * DOCUMENTATION: If online documentation was used to create code in this file, then list them with a brief description here. Use https://bit.ly/ to minimize the URL. 
- *                 (example- (1)) List<double> - https://bit.ly/2wFEESu. A system.collections.generic list object of type double.
- *                 (example- (2)) foreach - https://bit.ly/2T16AZT. An iterator for any object type.
+ * DOCUMENTATION: (1) Arcgis Pro SDK Snippets - https://bit.ly/395z4fO. Used the code to create a parcel fabric record and assign it as the active record.
  *
  *
  * APPLICABLE
@@ -99,6 +97,9 @@
  *            (example- (1) C# Coding Standards - https://bit.ly/r398u779. DCAD standards for C# development.
  *
  *
+ * MODIFICATIONS:
+ *                    06/14/22 -jwf- Added the StatusOptions enum type to constrain the _recordStatus property to
+ *                                   values defined in the RecordStatus domain in the enterprise geodatabase.
  * ***************************************************************************************************************************************************************
  * ***************************************************************************************************************************************************************
  */
@@ -199,6 +200,12 @@ namespace pro_createrecords_addin
         private string _docNum;           // Instrument number or sequence number depending on the AFC Type
         private string _docType;          // Description of the deed type from DEED_MAIN table
         private int _recordType;          // Variable that holds the record type based on the doc type
+        private enum StatusOptions        // Enum for populating the _recordStatus variable
+        {
+            Publish = 1,
+            PublishAfterCertification = 2,
+            Pending = 3
+        }
         private int _recordStatus;        // Determines if the record's parcels should be published.
         private bool _validafclog;        // Boolean value that determines if the afc log is valid.
         private Color _msgClrDocNum;      // Color object foreground for the listbox item's doc num text property .
@@ -234,7 +241,7 @@ namespace pro_createrecords_addin
             _docNum = BLANK;
             _docType = BLANK;
             _recordType = 0;
-            _recordStatus = 0;
+            _recordStatus = (int)StatusOptions.Publish;
             _validafclog = true;
             _msgClrDocNum = Color.FromRgb(0, 0, 0); ;
             _msgClrAcctNum = Color.FromRgb(128, 128, 128);
@@ -731,10 +738,10 @@ namespace pro_createrecords_addin
                 switch (_afcStatusCd)
                 {
                     case 4:                            // Cert Hold
-                        _recordStatus = 1;
+                        _recordStatus = (int)StatusOptions.PublishAfterCertification;
                         break;
                     default:                          // Not Cert Hold
-                        _recordStatus = 0;
+                        _recordStatus = (int)StatusOptions.Publish;
                         break;
                 }
             }
