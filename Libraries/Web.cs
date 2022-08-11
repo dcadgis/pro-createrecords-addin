@@ -74,7 +74,7 @@ namespace DCAD.GIS
      *
      * SUPPORTING
      * ONLINE
-     * DOCUMENTATION: (1) EventLog.WriteEntry - https://bit.ly/3N9poze. Writes an entry in the event log.
+     * DOCUMENTATION: (1) ArcGISPortalManager - https://bit.ly/3PdLi4Z. Object representing ArcGIS Pro's portal manager in the backstage.
      *                (2) Log - Method used from Bob Horn. See   
      *
      *

@@ -79,6 +79,8 @@
  * MODIFICATIONS:
  * 
  *                 06/16/22 -jwf- Altered the name of the database view acting as AFC log data source.
+ *                 08/11/22 -jwf- Added logic to change the database server name connection based on the
+ *                                active portal url (development, staging, production) environments.
  * ***************************************************************************************************************************************************************
  * ***************************************************************************************************************************************************************
  */
@@ -97,8 +99,9 @@ using System.Collections.ObjectModel;
 using System.Windows.Data;
 using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
-using System.Windows.Controls;
+using System.Windows.Forms;
 using DCAD.GIS;
+
 
 
 namespace pro_createrecords_addin
@@ -670,12 +673,20 @@ namespace pro_createrecords_addin
                     break;
 
                 case 3: // Database server unknown
-                    _serverInstance = "UNKNOWN";
-                    break;
+
+                    OS.LogError("The target database server is UNKNOWN.", "Create Records Add-In");
+
+                    // TODO: Correct dispatch error with these - MessageBox.Show("The target database server is UNKNOWN.", "Create Records Add-In", MessageBoxButtons.OK);
+
+                    return;
 
                 default: // Something else happened
 
-                    break;
+                    OS.LogError("There was a problem setting the target database environment.", "Create Records Add-In");
+
+                    // TODO: Correct dispatch error with these - MessageBox.Show("Created Records Add-In: There was a problem setting the target database environment.");
+
+                    return;
             }
 
             ServerInstance = _serverInstance;
