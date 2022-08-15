@@ -100,6 +100,8 @@
  * MODIFICATIONS:
  *                    06/14/22 -jwf- Added the StatusOptions enum type to constrain the _recordStatus property to
  *                                   values defined in the RecordStatus domain in the enterprise geodatabase.
+ *                    08/15/22 -jwf- Applied color enhancements to document and account number fonts to address
+ *                                   optional application themes.
  * ***************************************************************************************************************************************************************
  * ***************************************************************************************************************************************************************
  */
@@ -124,6 +126,7 @@ using System.Windows.Media;
 using System.Windows.Media.Imaging;
 using System.Diagnostics;
 using DCAD.GIS;
+using ArcGIS.Desktop.Framework;
 
 namespace pro_createrecords_addin
 {
@@ -762,38 +765,108 @@ namespace pro_createrecords_addin
 
             /**********************************************
             * Define colors for dock pane text         ****
+            * Colors will be selected based on the app's  *
+            * current theme                               *
             **********************************************/
+
+            // Get application theme
+            var thisApp = FrameworkApplication.Current;
+            
 
             try
             {
-
                 if (_rush)
                 {
 
-                    // Rush (Both foreground types are red)
+                    switch (FrameworkApplication.ApplicationTheme)
+                    {
+                        case ApplicationTheme.Default:
+                            // Rush (Both foreground types are red)
 
-                    _msgClrDocNum = Color.FromRgb(255, 0, 0);
-                    _msgClrAcctNum = Color.FromRgb(255, 0, 0);
+                            _msgClrDocNum = Color.FromRgb(255, 0, 0);
+                            _msgClrAcctNum = Color.FromRgb(255, 0, 0);
+                            break;
+                        case ApplicationTheme.Dark:
+                            // Rush (Both foreground types are pink)
 
+                            _msgClrDocNum = Color.FromRgb(255, 192, 203);
+                            _msgClrAcctNum = Color.FromRgb(255, 192, 203);
+                            break;
+                        case ApplicationTheme.HighContrast:
+                            // Rush (Both foreground types are red)
+
+                            _msgClrDocNum = Color.FromRgb(255, 0, 0);
+                            _msgClrAcctNum = Color.FromRgb(255, 0, 0);
+                            break;
+                        default:
+                            // Rush (Both foreground types are red)
+
+                            _msgClrDocNum = Color.FromRgb(255, 0, 0);
+                            _msgClrAcctNum = Color.FromRgb(255, 0, 0);
+
+                            break;
+                    }
 
                 }
 
                 else if (_foregroundType == 1)
 
                 {
+                    switch (FrameworkApplication.ApplicationTheme)
+                    {
+                        case ApplicationTheme.Default:
+                            // Document Number (Black)
 
-                    // Document Number (Black)
+                            _msgClrDocNum = Color.FromRgb(0, 0, 0);
 
-                    _msgClrDocNum = Color.FromRgb(0, 0, 0);
+                            break;
+                        case ApplicationTheme.Dark:
+                            // Document Number (Medium Aquamarine)
+
+                            _msgClrDocNum = Color.FromRgb(102, 205, 170);
+                            break;
+                        case ApplicationTheme.HighContrast:
+                            // Document Number (Royal Blue)
+
+                            _msgClrDocNum = Color.FromRgb(65, 105, 225);
+                            break;
+                        default:
+                            // Document Number (Black)
+
+                            _msgClrDocNum = Color.FromRgb(0, 0, 0);
+                            break;
+                    }
 
                 }
 
                 else
                 {
+                    switch (FrameworkApplication.ApplicationTheme)
+                    {
+                        case ApplicationTheme.Default:
+                            // Account Number (Dark Gray)
 
-                    // Account Number (Dark Gray)
+                            _msgClrAcctNum = Color.FromRgb(128, 128, 128);
 
-                    _msgClrAcctNum = Color.FromRgb(128, 128, 128);
+                            break;
+                        case ApplicationTheme.Dark:
+                            // Account Number (Cornsilk)
+
+                            _msgClrAcctNum = Color.FromRgb(255, 248, 220);
+                            break;
+                        case ApplicationTheme.HighContrast:
+                            // Account Number (Violet)
+
+                            _msgClrAcctNum = Color.FromRgb(238, 130, 238);
+                            break;
+                        default:
+                            // Account Number (Dark Gray)
+
+                            _msgClrAcctNum = Color.FromRgb(128, 128, 128);
+                            break;
+                    }
+
+
 
                 }
 
@@ -891,11 +964,11 @@ namespace pro_createrecords_addin
                 });
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    OS.LogError(errorMessage, "Create New Record Add-In: Create New Record");
+                    OS.LogError(errorMessage, "Create Records AddIn");
                 }
                 else
                 {
-                    OS.LogInformation(String.Format("Created Record: {0} - {1}.", _name, _afcNote), "Create New Record Add-In: Create New Record");
+                    OS.LogInformation(String.Format("Created Record: {0} - {1}.", _name, _afcNote), "Create Records AddIn");
 
                     MessageBox.Show(String.Format("Created Record: {0} - {1}.", _name, _afcNote));
 
@@ -907,7 +980,7 @@ namespace pro_createrecords_addin
             catch (Exception ex)
             {
 
-                OS.LogException(ex, "Create New Record Add-In: Create New Record");
+                OS.LogException(ex, "Create Records AddIn");
             }
 
             finally

@@ -101,8 +101,7 @@ using System.Windows.Input;
 using Microsoft.Toolkit.Mvvm.Input;
 using System.Windows.Forms;
 using DCAD.GIS;
-
-
+using System.Threading;
 
 namespace pro_createrecords_addin
 {
@@ -648,11 +647,25 @@ namespace pro_createrecords_addin
         /// <summary>
         /// This method returns the database server
         /// name based on the environment derived from
-        /// the active portal 
+        /// the active portal.
+        /// ** IMPORTANT ** If this add-in is referenced
+        /// by another toolbar or button group, it will
+        /// load faster than the active portal can register
+        /// and will throw an exception. For this purpose,
+        /// the thread sleep operation gives the project
+        /// time to register the active portal.
         /// </summary>
         public void GetServerInstanceByEnv()
         {
             string _serverInstance = String.Empty;
+
+            /*******************************************
+             * WAIT 3 SECONDS
+             * Gives the application time to register
+             * the active portal
+             ******************************************/
+
+            Thread.Sleep(3000);
 
             // Set the environment
             _web.SetEnvironment();

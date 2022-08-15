@@ -1,11 +1,11 @@
 ﻿<ArcGIS defaultAssembly="pro-createrecords-addin.dll" defaultNamespace="pro_createrecords_addin" xmlns="http://schemas.esri.com/DADF/Registry" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://schemas.esri.com/DADF/Registry file:///C:/Program%20Files/ArcGIS/Pro/bin/ArcGIS.Desktop.Framework.xsd">
-  <AddInInfo id="{73c471d3-11e6-40f9-b8f5-ca9b6e9742b4}" version="v1.0.2" desktopVersion="2.9.3"> <!-- desktop version = 2.8.29751 -->
+  <AddInInfo id="{73c471d3-11e6-40f9-b8f5-ca9b6e9742b4}" version="v1.0.3" desktopVersion="2.9.3"> <!-- desktop version = 2.8.29751 -->
     <Name>Create Records</Name>
     <Description>ArcGIS Pro Create AFC Records</Description>
     <Image>Images\new_record_32px.png</Image>
     <Author>John W. Fell</Author>
     <Company>Dallas Central Appraisal District</Company>
-    <Date>6/02/2022 3:51:00 PM</Date>
+    <Date>8/15/2022 11:49:00 AM</Date>
     <Subject>Editing</Subject>
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
@@ -29,7 +29,7 @@
       <controls>
         <!-- add your controls here -->
         <button id="pro_createrecords_addin_CreateRecordsPane_ShowButton" caption="Show Create Records Pane" className="CreateRecordsPane_ShowButton" loadOnClick="true" smallImage="Images\create_records_image_16px.png" largeImage="Images\create_records_image_32px.png">
-          <tooltip heading="Show Create Records Pane">Show Create Records Pane v1.0.2<disabledText /></tooltip>
+          <tooltip heading="Show Create Records Pane">Show Create Records Pane v1.0.3<disabledText /></tooltip>
         </button>
       </controls>
       <dockPanes>

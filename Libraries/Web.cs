@@ -9,6 +9,7 @@ using System.Globalization;
 using System.Diagnostics.CodeAnalysis;
 using ArcGIS.Desktop.Core;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
+using System.Windows;
 
 namespace DCAD.GIS
 {
@@ -183,20 +184,24 @@ namespace DCAD.GIS
                 // Setup the async portal object
                 ArcGISPortal active_portal = ArcGISPortalManager.Current.GetActivePortal();
 
-                await QueuedTask.Run(() =>
+                if (active_portal == null || !active_portal.IsSignedOn()) // no currently active portal
                 {
-                    if (active_portal == null) // no currently active portal
-                    {
-                        PortalURI = "NO VALID PORTAL URI";
-                        return;
-                    }
+                    PortalURI = "NO VALID PORTAL URI";
+                    MessageBox.Show("There is no active portal at the moment. Please set the active portal and try again.");
+                    return;
+                }
 
-                    else  // Successful portal connection; return portal uri
+                else if (active_portal.IsSignedOn())
+                {
+                    await QueuedTask.Run(() =>
                     {
-                        PortalURI = active_portal.PortalUri.ToString();
-                    }
-                });
-
+                       
+                       // Successful portal connection; return portal uri
+                       
+                            PortalURI = active_portal.PortalUri.ToString();
+                       
+                    });
+                }
 
             }
             catch (Exception ex)
