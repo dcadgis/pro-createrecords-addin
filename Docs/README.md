@@ -58,12 +58,15 @@ Active and have been assigned to the authenticated user. These will be
 bound to the dockpane and allow GIS Specialists to search for AFC logs 
 within the ArcGIS Pro project. The Add-In will import select columns 
 from the AFC_LOG database table formatted for a quick view to help 
-identify the AFC log for the GIS specialist. 
+identify the AFC log for the GIS specialist. The pane has been enhanced to
+display font colors with contrast appropriate for the application theme.
+
+![Dark Theme](../Images/dark_theme.png)
 
 
 ### Deployment
 This Add-In will be made available to users through a network share. 
-The network share is [\\\\dcad.org\GIS\Source\Addins\ArcGIS_Pro_AddIns](#\\dcad.org\GIS\Source\Addins\ArcGIS_Pro_AddIns). 
+The network share is [\\\\dcad.org\GIS\Source\AddInsPro](#\\dcad.org\GIS\Source\AddInsPro). 
 Any user that has the network share mapped in the ArcGIS Pro 
 application can access the Add-In and use it when opening ArcGIS Pro.
 
