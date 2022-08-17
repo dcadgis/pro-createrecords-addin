@@ -19,7 +19,7 @@ The current version for this project is **v1.0.4**.
 
 #### Version Features
 - Messaging centralized into a class library
-- Fixed an issue with the commmand causing the App to hang when opening from
+- Fixed an issue with the command causing the App to hang when opening from
   the project from the Recent Projects list
 
 
