@@ -14,6 +14,15 @@
 This project represents an ArcGIS Pro 2.9 SDK Add-In that reads a database view and 
 displays view data within a custom list nested within a dockpane.
 
+### Current Version 
+The current version for this project is **v1.0.4**.
+
+#### Version Features
+- Messaging centralized into a class library
+- Fixed an issue with the commmand causing the App to hang when opening from
+  the project from the Recent Projects list
+
+
 ### Architecture
 A combination of directories contain sql queries, c# files, images, and documentation files.
 Their purpose and contents include:
@@ -61,7 +70,7 @@ from the AFC_LOG database table formatted for a quick view to help
 identify the AFC log for the GIS specialist. The pane has been enhanced to
 display font colors with contrast appropriate for the application theme.
 
-![Dark Theme](../Images/dark_theme.png)
+![Dark Theme](../DarkImages/dark_theme.png)
 
 
 ### Deployment

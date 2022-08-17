@@ -102,6 +102,8 @@ using Microsoft.Toolkit.Mvvm.Input;
 using System.Windows.Forms;
 using DCAD.GIS;
 using System.Threading;
+using ArcGIS.Desktop.Core;
+using ArcGIS.Desktop.Mapping;
 
 namespace pro_createrecords_addin
 {
@@ -114,67 +116,138 @@ namespace pro_createrecords_addin
         private const string _dockPaneID  = "pro_createrecords_addin_CreateRecordsPane";
         private const string _database = "GEDT";
         private const AuthenticationMode _authentication = AuthenticationMode.OSA;
-        private const string _version = "dbo.DEFAULT";
+        private const string _version = "sde.DEFAULT";
+        private const string _stagingInstance = "DCADZOEY";
         private const string _afcView = "ADM.AFC_LOG_SDE_VW";
+        private const string _actView = "ADM.ACTIVE_RECORDS_VW";
+        private const string _dltView = "ADM.DELETED_RECORDS_VW";
         private const string _yes = "Y";
         private const string _blank = "";
+        private const string _eventLogSourceName = "ArcGIS Pro: Create Records AddIn";
+
+        #endregion
+
+        #region Private Fields
+
+        // Fields related to the observable collection
         private ObservableCollection<AFCLog> _afclogs = new ObservableCollection<AFCLog>();
         private ObservableCollection<AFCLog> _templogs = new ObservableCollection<AFCLog>();
         private ObservableCollection<AFCLog> _records = new ObservableCollection<AFCLog>();
         private ReadOnlyObservableCollection<AFCLog> _afclogsRO;
         private Object _lockObj = new object();
-        private OS _os = new OS();
+        
+        // Fields related to instances of class libraries
         private Web _web = new Web();
-        private DCAD.GIS.Database _db = new DCAD.GIS.Database();
         private string _instance;
+        private Layers _lyrs = new Layers();
+        private Messaging _msg = new Messaging();
+        private DCAD.GIS.Database _db = new DCAD.GIS.Database();
+        private bool _afcViewExists = false;
+        private bool _actViewExists = false;
+        private bool _dltViewExists = false;
+
+
+
+        #endregion
+
+        #region ICommand Implementations
 
         /**************************************************************************************************
-         * Public ICommand Implementations for Custom WPF Buttons. This allows the application to call    *
-         * existing methods in the ViewModel from the button using AsyncRelayCommand.                     *
-         * (1) RefreshListCommand - Refreshes the afc log list.                                           *
-         * (2) CreateRecordCommand - Creates a new record based on selected AFC Log information.          *
-         * ************************************************************************************************
-         * THE COMMAND BELOW IS NOT CURRENTLY USED. THIS WAS NOT RECOMMENDED BY ESRI.                     *
-         * ************************************************************************************************
-         * (3) CreateCleanupRecordCommand - Creates a new parcel fabric records of the cleanup type.      *
-         *     This is a custom record with specific attributes applied automatically when the workflow   *
-         *     involves  cleaning up GIS data only and no legal document is triggering a parcel change.   *
-         *************************************************************************************************/
+          * Public ICommand Implementations for Custom WPF Buttons. This allows the application to call    *
+          * existing methods in the ViewModel from the button using AsyncRelayCommand.                     *
+          * (1) RefreshListCommand - Refreshes the afc log list.                                           *
+          * (2) CreateRecordCommand - Creates a new record based on selected AFC Log information.          *
+          * ************************************************************************************************
+          * THE COMMAND BELOW IS NOT CURRENTLY USED. THIS WAS NOT RECOMMENDED BY ESRI.                     *
+          * ************************************************************************************************
+          * (3) CreateCleanupRecordCommand - Creates a new parcel fabric records of the cleanup type.      *
+          *     This is a custom record with specific attributes applied automatically when the workflow   *
+          *     involves  cleaning up GIS data only and no legal document is triggering a parcel change.   *
+          *************************************************************************************************/
         public ICommand RefreshListCommand { get; set; }
 
         //public ICommand CreateCleanupRecordCommand { get; set; }
 
 
+
         #endregion
+
+
 
         public CreateRecordsPaneViewModel() 
         {
-            //TODO: Check to ensure that a parcel fabric is
-            // included in the current map and that the AFC Log View exists
-            // in the geodatabase
 
-            /* Identify the correct environment */
-            GetServerInstanceByEnv();
+            // Assign the event source for this 
+            // application
 
-        /******************************************************************
-         * ReadOnlyObservableCollection for AFC Logs binding:
-         * This variable is assigned a new ReadOnlyObservableCollection
-         * bound to the public ObservableCollection object _afclogs.
-         * The _afclogs variable is a collection of AFCLog objects and 
-         * is manipulated based on the contents of the ADM.AFC_LOG_VW
-         * database view. To update the list of AFC logs in the
-         * wrap panel properly, a lock object must be used to add
-         * items to the _afclogs list. However, the AFC logs list only
-         * updates as changes occur to the database view when bound to
-         * a ReadOnlyObservableCollection, hence this approach is used.
-         ******************************************************************/
+            OS.Source = _eventLogSourceName;
 
+            // Assing the instance name
+            ServerInstance = _stagingInstance;
+
+            #region Uncomment When Server Instance, Database View, Admin User, and Parcel Fabric Checks are Working
+            /*****************************************
+            * Get the server instance by returning
+            * the active portal in the arcgis pro
+            * portal manager
+            *****************************************/
+            //GetServerInstanceByEnvAsync();
+
+
+            /*******************************************************************
+            * Check to ensure that the AFC Log View, Active Records View, and  *
+            * Delted Records Views exist in the target database                *
+            *******************************************************************/
+            //RequiredViewsExistAsync(_afcView);
+            //RequiredViewsExistAsync(_actView);
+            //RequiredViewsExistAsync(_dltView);
+
+            //if (AFCViewExists && ACTViewExists && DLTViewExists)
+            //{
+
+
+
+            /* Check to ensure that a parcel fabric is
+             * included in the current map
+             */
+
+            //_lyrs.ParcelFabricInMap = CheckParcelFabricExists();
+
+
+            /* Check to ensure that the authenticated
+             * user is an administrator on the machine
+             */
+
+            //if (!OS.IsAdministrator)
+            //       OS.LogWarning(Messages.WarningMessages[2002], OS.Source);
+            #endregion
+
+
+            /******************************************************************
+            * ReadOnlyObservableCollection for AFC Logs binding:
+            * This variable is assigned a new ReadOnlyObservableCollection
+            * bound to the public ObservableCollection object _afclogs.
+            * The _afclogs variable is a collection of AFCLog objects and 
+            * is manipulated based on the contents of the ADM.AFC_LOG_VW
+            * database view. To update the list of AFC logs in the
+            * wrap panel properly, a lock object must be used to add
+            * items to the _afclogs list. However, the AFC logs list only
+            * updates as changes occur to the database view when bound to
+            * a ReadOnlyObservableCollection, hence this approach is used.
+            ******************************************************************/
+            
             _afclogsRO = new ReadOnlyObservableCollection<AFCLog>(_afclogs);
             BindingOperations.EnableCollectionSynchronization(_afclogsRO, _lockObj);
 
 
-            // Call SearchForAFCLogs
-            AsyncSearchForAFCLogs();
+            /*******************************************
+            * Determine if there are assigned AFC logs
+            * for the authenticated user
+            *******************************************/ 
+
+            SearchForAFCLogsAsync();
+            
+            
             //DisplayTestMessage();
 
             /*******************************************************************************
@@ -184,9 +257,24 @@ namespace pro_createrecords_addin
              * be called from custom button controls on the xaml UI.                       *
              * *****************************************************************************/
 
-            RefreshListCommand = new AsyncRelayCommand( func => AsyncSearchForAFCLogs());
-            
+            RefreshListCommand = new AsyncRelayCommand(func => SearchForAFCLogsAsync());
+
+            #region For Create Cleanup Record Command
+
             //CreateCleanupRecord = new AsyncRelayCommand(func => AsyncCreateCleanupRecord());
+
+            #endregion
+
+
+            #region Uncomment When Admin User Check Working
+            //}
+            //else
+            //{
+            //    OS.LogError(Messages.ErrorMessages[3007], OS.Source);
+            //    return;
+            //}
+            #endregion
+
 
 
         }
@@ -260,7 +348,7 @@ namespace pro_createrecords_addin
                 SetProperty(ref _searchString, value, () => SearchString);
 
                 //Call SearchForAFCLogs
-                AsyncSearchForAFCLogs(_searchString);
+                SearchForAFCLogsAsync(_searchString);
 
 
             }
@@ -271,12 +359,73 @@ namespace pro_createrecords_addin
 
         private AFCLog _selectedAFCLog;
 
+
         public AFCLog SelectedAFCLog
         {
             get { return _selectedAFCLog; }
             set { _selectedAFCLog = value; }
 
         }
+
+        /// <summary>
+        /// The messaging object for this
+        /// class
+        /// </summary>
+        public Messaging Messages
+        {
+            get { return _msg; }
+            set { _msg= value; }
+
+        }
+
+
+        /// <summary>
+        /// Reports back to the UI
+        /// that the AFC view exists
+        /// or that the user has permission
+        /// to select on the view. This
+        /// property is set by the
+        /// RequiredViewExistsAsync
+        /// method.
+        /// </summary>
+        public bool AFCViewExists 
+        {
+            get { return _afcViewExists;  }
+            set { _afcViewExists = value; }
+        }
+
+        /// <summary>
+        /// Reports back to the UI
+        /// that the Active Records view exists
+        /// or that the user has permission
+        /// to select on the view. This
+        /// property is set by the
+        /// RequiredViewExistsAsync
+        /// method.
+        /// </summary>
+        public bool ACTViewExists
+        {
+            get { return _actViewExists; }
+            set { _actViewExists = value; }
+
+        }
+
+        /// <summary>
+        /// Reports back to the UI
+        /// that the Deleted Records view exists
+        /// or that the user has permission
+        /// to select on the view. This
+        /// property is set by the
+        /// RequiredViewExistsAsync
+        /// method.
+        /// </summary>
+        public bool DLTViewExists
+        {
+            get { return _dltViewExists; }
+            set { _dltViewExists = value; }
+
+        }
+
 
         #endregion
 
@@ -317,7 +466,7 @@ namespace pro_createrecords_addin
         /// current session, then skip this AFC log and do not add it
         /// to the Create Records Pane collection. 
         /// </summary>
-        public async Task AsyncSearchForAFCLogs(string _searchString = _blank)
+        public async Task SearchForAFCLogsAsync(string _searchString = _blank)
         {
             if (AFCLogs.Count > 0)
             {
@@ -335,7 +484,7 @@ namespace pro_createrecords_addin
             await QueuedTask.Run(() =>
             {
                 // Get a list of AFC Logs
-                PopulateAFCLogCollection(_searchString);
+                PopulateAFCLogCollectionAsync(_searchString);
 
                 // Search for AFC Logs
                 // and apply search string
@@ -418,7 +567,7 @@ namespace pro_createrecords_addin
 
         #region Populates AFCLog Collection
 
-        public async Task PopulateAFCLogCollection(string _searchString)
+        public async Task PopulateAFCLogCollectionAsync(string _searchString)
         {
             // Define columns to be included in
             // query filter
@@ -450,17 +599,14 @@ namespace pro_createrecords_addin
                     DatabaseConnectionProperties connectionProperties = new DatabaseConnectionProperties(EnterpriseDatabaseType.SQLServer)
                     {
                         AuthenticationMode = _authentication,
-
-                        // Where testMachine is the machine where the instance is running and testInstance is the name of the SqlServer instance.
+                                                
                         Instance = ServerInstance,
-
-                        // Provided that a database called LocalGovernment has been created on the testInstance and geodatabase has been enabled on the database.
+                                                
                         Database = _database,
+                                                
+                        //Version = _version
 
-                        // Provided that a login called gdb has been created and corresponding schema has been created with the required permissions.
-                        //User = "gdb",
-                        //Password = "password",
-                        Version = _version
+                        Branch = _version
                     };
 
 
@@ -557,11 +703,11 @@ namespace pro_createrecords_addin
                 // One of the fields in the where clause might not exist. 
                 // There are multiple ways this can be handled:
                 // Handle error appropriately
-               OS.LogWarning(fieldException.Message, "Create Records Add-In: Populate AFC Log Collection");
+               OS.LogWarning(fieldException.Message, OS.Source);
             }
             catch (Exception ex)
             {
-                OS.LogException(ex, "Create Records Add-In: Populate AFC Log Collection");
+                OS.LogException(ex, OS.Source);
             }
         }
 
@@ -583,13 +729,13 @@ namespace pro_createrecords_addin
             try
             {
 
-                AsyncSearchForAFCLogs();
+                SearchForAFCLogsAsync();
 
             }
             catch (Exception ex)
             {
 
-                OS.LogException(ex, "Create Records Add-In: OnRecordCreated Event Handler");
+                OS.LogException(ex, OS.Source);
             }
 
         }
@@ -643,72 +789,135 @@ namespace pro_createrecords_addin
                 }
         #endregion
 
+
+
         #region Get Server Instance Based on Environment
         /// <summary>
         /// This method returns the database server
         /// name based on the environment derived from
         /// the active portal.
-        /// ** IMPORTANT ** If this add-in is referenced
-        /// by another toolbar or button group, it will
-        /// load faster than the active portal can register
-        /// and will throw an exception. For this purpose,
-        /// the thread sleep operation gives the project
-        /// time to register the active portal.
         /// </summary>
-        public void GetServerInstanceByEnv()
+        public async Task GetServerInstanceByEnvAsync()
         {
-            string _serverInstance = String.Empty;
-
-            /*******************************************
-             * WAIT 3 SECONDS
-             * Gives the application time to register
-             * the active portal
-             ******************************************/
-
-            Thread.Sleep(3000);
 
             // Set the environment
-            _web.SetEnvironment();
-
+            await _web.SetEnvironmentAsync();
 
             switch (_web.Environment)
-            {
-                case 0: // Development database server
-                    _serverInstance = _db.DevTransDBServer;
-                    break;
+                {
+                    case 0: // Development database server
+                        ServerInstance = _db.DevTransDBServer;
+                        break;
 
-                case 1: // Staging database server
-                    _serverInstance = _db.StgTransDBServer;
-                    break;
+                    case 1: // Staging database server
+                        ServerInstance = _db.StgTransDBServer;
+                        break;
 
-                case 2: // Production database server
-                    _serverInstance = _db.prdTransDBServer;
-                    break;
+                    case 2: // Production database server
+                        ServerInstance = _db.prdTransDBServer;
+                        break;
 
-                case 3: // Database server unknown
+                    case 3: // Database server unknown
 
-                    OS.LogError("The target database server is UNKNOWN.", "Create Records Add-In");
+                        OS.LogError(Messages.ErrorMessages[3001], OS.Source);
 
-                    // TODO: Correct dispatch error with these - MessageBox.Show("The target database server is UNKNOWN.", "Create Records Add-In", MessageBoxButtons.OK);
+                        // TODO: Correct dispatch error with these - MessageBox.Show("The target database server is UNKNOWN.", "Create Records Add-In", MessageBoxButtons.OK);
 
-                    return;
+                        break;
 
-                default: // Something else happened
+                    default: // Something else happened
 
-                    OS.LogError("There was a problem setting the target database environment.", "Create Records Add-In");
+                        OS.LogError(Messages.ErrorMessages[3002], OS.Source);
 
                     // TODO: Correct dispatch error with these - MessageBox.Show("Created Records Add-In: There was a problem setting the target database environment.");
 
-                    return;
+                        break;
+                }
+
+
+        }
+
+        #endregion
+
+        #region Check if required views exist
+        /// <summary>
+        /// This asynchronous method returns a
+        /// boolean value verifying the existance
+        /// of a view name entered as a parameter.
+        /// </summary>
+        /// <param name="viewName"></param>
+        /// <returns>bool</returns>
+        public async Task RequiredViewsExistAsync(string viewName)
+        {
+            try
+            {
+
+                _db.DatabaseName = _database;
+                _db.BranchVersionName = _version;
+
+
+               await QueuedTask.Run(() =>
+               {
+                   using (Geodatabase geodatabase =
+                   new Geodatabase(_db.GetDatabaseConnProperties(ServerInstance)))
+
+                   {
+                      _db.TableExists(geodatabase, viewName).Wait();
+
+                   }
+               });
+
+
+                // Update the property based on the
+                // view name
+                switch (viewName)
+                {
+                    case _afcView:
+                        AFCViewExists = _db.ViewExists;
+                        break;
+                    case _actView:
+                        ACTViewExists = _db.ViewExists;
+                        break;
+                    case _dltView:
+                        DLTViewExists = _db.ViewExists;
+                        break;
+                    default:
+                        break;
+                }
+
             }
 
-            ServerInstance = _serverInstance;
+            catch (Exception ex)
+            {
+                OS.LogException(ex, OS.Source);
+            }
+        }
 
+        #endregion
+
+        #region Check if Parcel fabric exists
+
+        public bool CheckParcelFabricExists()
+        {
+            try
+            {
+                bool fabricExists = false;
+
+                fabricExists = _lyrs.ParcelFabricExists().Result;
+
+                return fabricExists;
+
+            }
+            catch (Exception ex)
+            {
+
+                OS.LogException(ex, OS.Source);
+                return false;
+            }
         }
         #endregion
 
         #endregion
-
 
 
         #region Delegates
@@ -722,6 +931,7 @@ namespace pro_createrecords_addin
 
 
     }
+
 
     /// <summary>
     /// Button implementation to show the DockPane.

@@ -5,7 +5,7 @@
     <Image>Images\new_record_32px.png</Image>
     <Author>John W. Fell</Author>
     <Company>Dallas Central Appraisal District</Company>
-    <Date>8/15/2022 11:49:00 AM</Date>
+    <Date>8/16/2022 12:36:00 PM</Date>
     <Subject>Editing</Subject>
     <!-- Note subject can be one or more of these topics:
                     Content, Framework, Editing, Geodatabase, Geometry, Geoprocessing, Layouts, Map Authoring, Map Exploration -->
@@ -29,7 +29,7 @@
       <controls>
         <!-- add your controls here -->
         <button id="pro_createrecords_addin_CreateRecordsPane_ShowButton" caption="Show Create Records Pane" className="CreateRecordsPane_ShowButton" loadOnClick="true" smallImage="Images\create_records_image_16px.png" largeImage="Images\create_records_image_32px.png">
-          <tooltip heading="Show Create Records Pane">Show Create Records Pane v1.0.3<disabledText /></tooltip>
+          <tooltip heading="Show Create Records Pane">Show Create Records Pane v1.0.4<disabledText /></tooltip>
         </button>
       </controls>
       <dockPanes>
