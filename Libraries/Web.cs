@@ -10,6 +10,9 @@ using System.Diagnostics.CodeAnalysis;
 using ArcGIS.Desktop.Core;
 using ArcGIS.Desktop.Framework.Threading.Tasks;
 using System.Windows;
+using System.Collections.Generic;
+using System.Threading.Tasks;
+using ArcGIS.Core.Threading.Tasks;
 
 namespace DCAD.GIS
 {
@@ -89,8 +92,18 @@ namespace DCAD.GIS
 
     #endregion
 
-    public class Web
+    public class Web : Messaging
     {
+
+        #region Fields
+
+        public Web()
+        {
+
+
+        }
+        #endregion
+
         #region Enumerations
 
         #region Environments
@@ -153,8 +166,9 @@ namespace DCAD.GIS
         /// <summary>
         /// Contains the uri for the currently active portal.
         /// </summary>
-        private string _portalURI = String.Empty;
-        public string PortalURI
+        /// 
+        private Uri _portalURI = new Uri("https://www.arcgis.com/");
+        public Uri PortalURI
         {
             get { return _portalURI; }
             set { _portalURI = value; }
@@ -175,42 +189,28 @@ namespace DCAD.GIS
         /// Asynchronous method that gets the active portal's uniform resource identifier (Uri).
         /// **IMPORTANT**: This method is only valid when used with the ArcGIS PRO SDK.
         /// </summary>
-        /// <returns>uri - String representing the active portal's uri.</returns>
-        public async void GetActivePortalUri()
+        /// <returns>Task</returns>
+        public async Task GetActivePortalUriAsync()
         {
             try
             {
 
-                // Setup the async portal object
-                ArcGISPortal active_portal = ArcGISPortalManager.Current.GetActivePortal();
-
-                if (active_portal == null || !active_portal.IsSignedOn()) // no currently active portal
+                await QueuedTask.Run( () =>
                 {
-                    PortalURI = "NO VALID PORTAL URI";
-                    MessageBox.Show("There is no active portal at the moment. Please set the active portal and try again.");
-                    return;
-                }
 
-                else if (active_portal.IsSignedOn())
-                {
-                    await QueuedTask.Run(() =>
-                    {
-                       
-                       // Successful portal connection; return portal uri
-                       
-                            PortalURI = active_portal.PortalUri.ToString();
-                       
-                    });
-                }
+                    PortalURI = ArcGISPortalManager.Current.GetActivePortal().PortalUri;
 
-            }
+
+                });
+
+
+             }
             catch (Exception ex)
             {
 
-                OS.LogException(ex, "DCAD.GIS.Web Class Library");
+                OS.LogException(ex, OS.Source);
+                OS.LogError(this.ErrorMessages[3006], OS.Source);
             }
-
-
 
         }
 
@@ -222,30 +222,32 @@ namespace DCAD.GIS
 
         #region Environment Methods
 
-        #region Set Environment
+        #region Set Environment Async
         /// <summary>
         /// Captures the current arcgis server or portal uri and interrogates this value to determine
         /// the environment.
         /// </summary>
-        /// <returns>returnEnv - Integer value representing the current arcgis server or portal environment. </returns>
-        public void SetEnvironment()
+        /// <returns>Task</returns>
+        public async Task SetEnvironmentAsync()
         {
             // TODO: Add a logical statement that determines what to do if arcgis.com is the active portal
+            Environment = 0;
 
             // Get the Active Portal
-            GetActivePortalUri();
+            await GetActivePortalUriAsync();
 
-            if (PortalURI.ToUpper().Contains(DevelopmentIdentifier))
+
+            if (PortalURI.ToString().ToUpper().Contains(DevelopmentIdentifier))
             {
                 Environment = (int)Environments.Development;
             }
 
-            else if (PortalURI.ToUpper().Contains(StagingIdentifier))
+            else if (PortalURI.ToString().ToUpper().Contains(StagingIdentifier))
             {
                 Environment = (int)Environments.Staging;
             }
 
-            else if (PortalURI.ToUpper().Contains(ProductionIdentifier))
+            else if (PortalURI.ToString().ToUpper().Contains(ProductionIdentifier))
             {
                 Environment = (int)Environments.Production;
             }
@@ -263,6 +265,8 @@ namespace DCAD.GIS
         #endregion
 
         #endregion
+
+        
 
 
 

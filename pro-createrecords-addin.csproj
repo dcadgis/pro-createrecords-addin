@@ -156,6 +156,9 @@
     <Compile Include="CreateRecordsPane.xaml.cs" />
     <Compile Include="CreateRecordsPaneViewModel.cs" />
     <Compile Include="Libraries\Database.cs" />
+    <Compile Include="Libraries\Layers.cs" />
+    <Compile Include="Libraries\Messaging.cs" />
+    <Compile Include="Libraries\Taks.cs" />
     <Compile Include="Libraries\Web.cs" />
     <Compile Include="Libraries\OS.cs" />
     <Compile Include="Module1.cs" />
@@ -195,7 +198,7 @@
     <Resource Include="DarkImages\no_document_darkimage_64px.png" />
     <Resource Include="DarkImages\research_document_darkimage_64px.png" />
     <Resource Include="DarkImages\split_document_darkimage_64px.png" />
-    <Resource Include="Images\dark_theme.png" />
+    <Resource Include="DarkImages\dark_theme.png" />
     <Resource Include="Images\eventlog.png" />
     <Resource Include="Images\permissions.png" />
     <Content Include="SQL\AN_CreateDeletedRecords_View.sql" />

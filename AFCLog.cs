@@ -132,7 +132,7 @@ namespace pro_createrecords_addin
 {
 
 
-    public class AFCLog
+    public class AFCLog : Messaging
     {
 
 
@@ -876,7 +876,7 @@ namespace pro_createrecords_addin
             catch (Exception ex)
             {
 
-                OS.LogException(ex, "Create New Record Add-In: Set Foreground Color");
+                OS.LogException(ex, OS.Source);
             }
 
         }
@@ -964,13 +964,13 @@ namespace pro_createrecords_addin
                 });
                 if (!string.IsNullOrEmpty(errorMessage))
                 {
-                    OS.LogError(errorMessage, "Create Records AddIn");
+                    OS.LogError(errorMessage, OS.Source);
                 }
                 else
                 {
-                    OS.LogInformation(String.Format("Created Record: {0} - {1}.", _name, _afcNote), "Create Records AddIn");
+                    OS.LogInformation(String.Format(this.InfoMessages[1001], _name, _afcNote), OS.Source);
 
-                    MessageBox.Show(String.Format("Created Record: {0} - {1}.", _name, _afcNote));
+                    MessageBox.Show(String.Format(this.InfoMessages[1001], _name, _afcNote));
 
                     
                 }
@@ -980,7 +980,7 @@ namespace pro_createrecords_addin
             catch (Exception ex)
             {
 
-                OS.LogException(ex, "Create Records AddIn");
+                OS.LogException(ex, OS.Source);
             }
 
             finally

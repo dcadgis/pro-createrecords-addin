@@ -85,6 +85,20 @@ namespace DCAD.GIS
     public class OS
     {
 
+        #region Private Fields
+
+        private static bool _isAdmin = false;
+
+        #endregion
+
+        #region Constructor
+
+        public OS()
+        {
+            _isAdmin = IsCurrentProcessAdmin();
+        }
+
+        #endregion
 
         #region Properties
 
@@ -100,6 +114,26 @@ namespace DCAD.GIS
         /// process starts.
         /// </summary>
         public static string Source { get; set; }
+
+        #endregion
+
+        #region IsAdministrator Property
+
+        /// <summary>
+        /// Boolean property that
+        /// describes the permission
+        /// level of the authenticated user.
+        /// If the authenticated user is an
+        /// administrator the value is true,
+        /// otherwise it is false.
+        /// </summary>
+
+
+        public static bool IsAdministrator
+        {
+            get { return _isAdmin; }
+            set { _isAdmin = value; }
+        }
 
         #endregion
 
@@ -160,7 +194,31 @@ namespace DCAD.GIS
 
         #endregion
 
-        #region Event Logging Procedures and Functions
+        #region Methods
+
+        #region Permission Methods
+
+
+        #region Is Current User an Administrator
+        /// <summary>
+        /// Returns a boolean value
+        /// that determines if the
+        /// authenticated user is
+        /// an administrator.
+        /// </summary>
+        /// <returns>bool</returns>
+        public static bool IsCurrentProcessAdmin()
+        {
+            var identity = System.Security.Principal.WindowsIdentity.GetCurrent();
+            var principal = new System.Security.Principal.WindowsPrincipal(identity);
+            return principal.IsInRole(System.Security.Principal.WindowsBuiltInRole.Administrator);
+        }
+
+        #endregion
+
+        #endregion
+
+        #region Event Logging Methods
 
         #region Get Current Authenticated User
         /// <summary>
@@ -379,7 +437,7 @@ namespace DCAD.GIS
 
         #region Ensure Log Message Limit
 
-        
+
         /// <summary>
         /// Ensure Log Message Limit
         /// Ensures that the log message entry text length does not exceed 
@@ -427,5 +485,11 @@ namespace DCAD.GIS
         #endregion
 
         #endregion
+
+        #endregion
+
+
+
+
     }
 }
